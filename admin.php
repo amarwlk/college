@@ -1,9 +1,35 @@
-
+<?php
+   include("config.php");
+   session_start();
+   
+   if($_SERVER["REQUEST_METHOD"] == "POST") {
+      // username and password sent from form 
+      
+      $myusername = mysqli_real_escape_string($db,$_POST['myusername']);
+      $mypassword = mysqli_real_escape_string($db,$_POST['mypassword']); 
+      
+      $sql = "SELECT no FROM admin WHERE name = '$myusername' and password = '$mypassword'";
+      $result = mysqli_query($db,$sql);
+      $row = mysqli_fetch_array($result,MYSQLI_ASSOC);
+      $active = $row['active'];
+      
+      $count = mysqli_num_rows($result);
+      
+      // If result matched $myusername and $mypassword, table row must be 1 row
+		
+      if($count == 1) {
+        
+         $_SESSION['login_user'] = $myusername;
+         
+         header("location:adcoco.php");
+      }else {
+         $error = "Your Login Name or Password is invalid";
+      }
+   }
+?>
 
 <?php
 include 'header.php';
-?>
-<?php 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -20,7 +46,7 @@ include 'header.php';
 <tr>
 <td>
 
-<form name="form1" method="post" action="checklogin.php">
+<form name="form1" method="post" action="">
 
 <table width="100%" border="0" cellpadding="3" cellspacing="1" bgcolor="#FFFFFF">
 <tr>
